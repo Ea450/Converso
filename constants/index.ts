@@ -71,3 +71,9 @@ export const recentSessions = [
     color: "#C8FFDF",
   },
 ];
+
+export const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Companions', href: '/companions' },
+  { label: 'My Journey', href: '/my-journey' },
+]
