@@ -5,6 +5,7 @@ import Lottie, { LottieRefCurrentProps } from "lottie-react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import soundwaves from '@/constants/soundwaves.json'
+import { addToSessionHistory } from "@/lib/actions/companion.action"
 
 enum CallStatus {
     INACTIVE = 'INACTIVE',
@@ -13,7 +14,7 @@ enum CallStatus {
     FINISHED = 'FINISHED',
 }
 
-const CompanionComponent = ({ subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
+const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
 
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [isSpeaking, setIsSpeaking] = useState(false)
@@ -60,7 +61,10 @@ const CompanionComponent = ({ subject, topic, name, userName, userImage, style, 
     useEffect(() => {
         const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
 
-        const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
+        const onCallEnd = () => {
+            setCallStatus(CallStatus.FINISHED);
+            addToSessionHistory(companionId)
+        };
 
         const onMessage = (message: Message) => {
             if (message.type === 'transcript' && message.transcriptType === 'final') {
@@ -89,7 +93,7 @@ const CompanionComponent = ({ subject, topic, name, userName, userImage, style, 
             vapi.off('speech-start', onSpeechStart)
             vapi.off('speech-end', onSpeechEnd)
         }
-    }, [])
+    }, [companionId])
     return (
         <section className="flex flex-col h-[70vh]">
             <section className="flex gap-8 max-sm:flex-col">
